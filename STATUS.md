@@ -48,14 +48,36 @@ Run it: `./run_weekly.sh 2026-09-08`  (env `CITIES="NEW BRAUNFELS,SEGUIN,SAN MAR
 
 ## Pipeline B — the customers
 
-**❌ NOT BUILT.** Needs:
-- `Ⓑ1` find every cleaning company in a metro (registry + web)
-- `Ⓑ2` enrich with an email from their own website (crawl4ai is available and is
-  legally clean here — it's their own public site)
-- `Ⓑ3` load into Instantly
+**DISCOVERY IS ALREADY DONE. This is an ENRICHMENT job, not a collection job.**
 
-Currently there are 36 companies collected by hand, 28 with emails. That's one small
-batch — enough for a first test, not enough to find a buyer reliably.
+`research/cleaning-prospects/2026-09-08-100mi/core-cleaning-candidates.csv` in the
+reddit repo already holds **2,608 cleaning businesses** (Austin 948, San Antonio 670,
+Round Rock 94, Pflugerville 79, New Braunfels 56). Of those, **398 are classified
+`janitorial_housekeeping_industry` (NAICS 561720)** — that is the commercial-cleaning
+subset and the highest-value targets. **Do not re-collect these.**
+
+**Zero of the 2,608 have an email.** The registry does not carry contact details.
+That is the whole job:
+
+```
+have:  business name + city + NAICS      (2,608 rows, done)
+need:  website URL  →  email address     ← build this
+```
+
+- `Ⓑ2a` name + city → find the business's website. This is the hard half; the registry
+  has no URL. `research/scripts/inspect-cleaning-websites.py` exists but requires
+  manually seeded URLs, which is why only 36 were ever enriched.
+- `Ⓑ2b` website → scrape a contact email. crawl4ai is available and legally clean for
+  this — it is the business's own public site, not a third-party database.
+- `Ⓑ3` load into Instantly.
+
+**Start with the 398 janitorial-coded rows**, not all 2,608. They are the commercial
+buyers; most of the remaining 2,210 are name-matched residential maid services who do
+not want commercial-premises leads.
+
+Prior hand-built batch: 36 companies, 28 with email, of which only **17** actually do
+commercial work and have a live mail domain — see `business/send-list-batch1.csv` in
+the reddit repo. 17 is too small to prove anything at a 2% reply rate.
 
 ## Also not built
 
