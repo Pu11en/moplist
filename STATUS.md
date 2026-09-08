@@ -14,17 +14,30 @@ Positioning, in customers' own words: *"not a lead five other companies already 
 Price hypothesis: **$49/mo flat, no contract, first 3 leads free.** Never tested on a
 buyer. Anchored on operators' stated spend ($400 Thumbtack → 1 job; $150 Google LSA → 4 jobs).
 
-## Where the research lives (do not duplicate it)
+## Everything you need is in this repo
 
-`/home/drewp/main-projects/reddit/.worktrees/wt-1546681327871336560/`
+**`docs/`** — all committed, read these before building anything:
 
 | File | What it gives you |
 |---|---|
-| `research/cleaning-new-business-lead-alerts-2026-09-08.md` | why this idea, with Reddit evidence + counterevidence |
-| `research/data-rights-ruling-2026-09-08.md` | **⚠ read before touching step 3** — why Google is banned |
-| `business/cleaning-lead-offer-copy-2026-09-08.md` | the offer, cold email copy, objections |
-| `planning/RESEARCH-PLAN.md` | task order across both folders |
-| `research/cleaning-prospects/2026-09-08-100mi/public-business-contacts.csv` | 36 cleaning companies, 28 with email — the first send list |
+| `docs/why-this-business.md` | the Reddit evidence this is built on, plus counterevidence |
+| `docs/data-rights-ruling.md` | **⚠ read before touching step 3** — why Google Places is banned |
+| `docs/competitors.md` | AlphaLeads at $19.99 and why our edge is qualification, not volume |
+| `docs/brand-and-offer.md` | MopList, $49/mo, positioning |
+| `docs/email-copy.md` | 5 cold email variants + follow-ups |
+| `docs/customer-journey.md` | reply → free trial → Stripe, with scripts for every branch |
+
+**`data/prospects/`** — gitignored, local only (third-party contact data, not for a
+public repo):
+
+| File | What |
+|---|---|
+| `core-cleaning-candidates.csv` | **2,608 cleaning businesses already collected.** 398 janitorial-coded. No emails — that's pipeline B's job. |
+| `public-business-contacts.csv` | 36 hand-enriched, 28 with email |
+| `send-list-batch1.csv` | the 17 that actually do commercial work and have a live mail domain |
+
+Original research lives in the reddit repo, but you do not need it — everything
+above is a copy.
 
 ## Pipeline A — the product
 
@@ -50,8 +63,7 @@ Run it: `./run_weekly.sh 2026-09-08`  (env `CITIES="NEW BRAUNFELS,SEGUIN,SAN MAR
 
 **DISCOVERY IS ALREADY DONE. This is an ENRICHMENT job, not a collection job.**
 
-`research/cleaning-prospects/2026-09-08-100mi/core-cleaning-candidates.csv` in the
-reddit repo already holds **2,608 cleaning businesses** (Austin 948, San Antonio 670,
+`data/prospects/core-cleaning-candidates.csv` already holds **2,608 cleaning businesses** (Austin 948, San Antonio 670,
 Round Rock 94, Pflugerville 79, New Braunfels 56). Of those, **398 are classified
 `janitorial_housekeeping_industry` (NAICS 561720)** — that is the commercial-cleaning
 subset and the highest-value targets. **Do not re-collect these.**
@@ -65,7 +77,7 @@ need:  website URL  →  email address     ← build this
 ```
 
 - `Ⓑ2a` name + city → find the business's website. This is the hard half; the registry
-  has no URL. `research/scripts/inspect-cleaning-websites.py` exists but requires
+  has no URL. the reddit repo's `research/scripts/inspect-cleaning-websites.py` exists but requires
   manually seeded URLs, which is why only 36 were ever enriched.
 - `Ⓑ2b` website → scrape a contact email. crawl4ai is available and legally clean for
   this — it is the business's own public site, not a third-party database.
@@ -76,8 +88,7 @@ buyers; most of the remaining 2,210 are name-matched residential maid services w
 not want commercial-premises leads.
 
 Prior hand-built batch: 36 companies, 28 with email, of which only **17** actually do
-commercial work and have a live mail domain — see `business/send-list-batch1.csv` in
-the reddit repo. 17 is too small to prove anything at a 2% reply rate.
+commercial work and have a live mail domain — see `data/prospects/send-list-batch1.csv`. 17 is too small to prove anything at a 2% reply rate.
 
 ## Also not built
 
