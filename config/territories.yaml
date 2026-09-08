@@ -1,0 +1,7 @@
+territories:
+  - name: New Braunfels
+    cities: [NEW BRAUNFELS]
+  - name: San Antonio
+    cities: [SAN ANTONIO, ALAMO HEIGHTS, CONVERSE, SCHERTZ]
+  - name: Austin
+    cities: [AUSTIN, ROUND ROCK, PFLUGERVILLE, KYLE, BUDA]

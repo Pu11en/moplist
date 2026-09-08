@@ -1,0 +1,12 @@
+# Real lead output — this IS the product. Never publish it.
+data/
+
+# Customer records — names, emails, what they pay. Never publish.
+customers/*.csv
+
+# Secrets
+.env
+*.key
+
+__pycache__/
+*.pyc
