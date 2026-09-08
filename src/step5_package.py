@@ -11,7 +11,7 @@ from common import DATA, read_csv, write_csv
 SAMPLE_N = 3   # how many leads to give away free in a cold email
 
 
-def email_body(rows, territory, paid, price='$150/mo'):
+def email_body(rows, territory, paid, price='$49/mo'):
     lines = []
     if paid:
         lines.append(f'Your {territory} list for the week of {dt.date.today()}:\n')
@@ -21,8 +21,8 @@ def email_body(rows, territory, paid, price='$150/mo'):
                      f'that likely do not have a commercial cleaner yet:\n')
         show = rows[:SAMPLE_N]
     for i, r in enumerate(show, 1):
-        lines.append(f'{i}. {r.get("places_name") or r["taxpayer_name"]}')
-        lines.append(f'   {r.get("address","")}')
+        lines.append(f'{i}. {r["taxpayer_name"]}')
+        lines.append(f'   {r.get("taxpayer_address","")}, {r.get("taxpayer_city","")}')
         lines.append(f'   filed {r.get("sos_charter_date","")[:10]}')
         lines.append('')
     if not paid:
