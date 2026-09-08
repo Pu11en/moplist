@@ -6,7 +6,7 @@ cd "$(dirname "$0")"
 AS_OF="${1:-$(date +%F)}"
 CITIES="${CITIES:-NEW BRAUNFELS}"
 
-echo "=== Lead Engine, week of $AS_OF ==="
+echo "=== MopList, week of $AS_OF ==="
 python3 src/step1_source.py --cities "$CITIES" --days 30 --as-of "$AS_OF"
 python3 src/step2_filter.py  --as-of "$AS_OF"
 python3 src/step3_verify.py  --as-of "$AS_OF"

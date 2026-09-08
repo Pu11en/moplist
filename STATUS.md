@@ -1,4 +1,4 @@
-# STATUS — read this first
+# MopList — STATUS, read this first
 
 Last updated 2026-09-08 by a Claude session. Written so a fresh agent can pick this
 up with zero prior context.
@@ -11,7 +11,7 @@ three weeks ago has no cleaning vendor and has been called by nobody.
 
 Positioning, in customers' own words: *"not a lead five other companies already called."*
 
-Price hypothesis: **$150/mo flat, no contract, first 3 leads free.** Never tested on a
+Price hypothesis: **$49/mo flat, no contract, first 3 leads free.** Never tested on a
 buyer. Anchored on operators' stated spend ($400 Thumbtack → 1 job; $150 Google LSA → 4 jobs).
 
 ## Where the research lives (do not duplicate it)
@@ -81,3 +81,17 @@ batch — enough for a first test, not enough to find a buyer reliably.
 5. Stripe link — only needed the day someone says yes
 
 Phases 1–2 produce zero revenue. The only step that proves anything is a real send.
+
+---
+
+## Brand (added 2026-09-08)
+
+- **Name:** MopList · **Domain:** moplist.com (available, Drew to purchase)
+- **Price:** **$49/mo**, no contract, 3 free leads first.
+  Revised down from $150 — see `research/competitor-scan-2026-09-08.md` in the
+  reddit repo. AlphaLeads sells raw filings at $19.99/mo, so $150 is indefensible.
+- **The one argument:** competitors sell volume (5,400 filings/day). 93% of that is
+  houses, mailboxes and holding companies. *"They send you 5,400 filings a day.
+  We send you the 19 with a floor to mop."*
+- **Email copy to use:** `business/moplist-brand-and-email-2026-09-08.md` in the
+  reddit repo. Do NOT use the earlier v1 copy — it quotes $150.
