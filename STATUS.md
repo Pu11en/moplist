@@ -46,7 +46,7 @@ above is a copy.
 | ① SOURCE | `src/step1_source.py` | ✅ **works** | TX Comptroller API, free, no key |
 | ② FILTER | `src/step2_filter.py` | ✅ **works** | drops HOLDINGS/CAPITAL/etc by name |
 | ③ VERIFY | `src/step3_verify.py` | ✅ **works** | registry address → commercial vs home/mailbox. **No Google.** |
-| ④ SCORE | `src/step4_score.py` | ❌ **BROKEN** | still scores on Google Places `types`/review count, which no longer exist. Rewire to registry signals: name category, `premises_confidence`, charter recency. |
+| ④ SCORE | `src/step4_score.py` | ✅ **works** | rewired to registry signals only: name category, `premises_confidence`, charter recency |
 | ⑤ PACKAGE | `src/step5_package.py` | ⚠ untested | should work once ④ is fixed |
 | ⑥ DELIVER | `src/step6_deliver.py` | ⚠ needs key | `INSTANTLY_API_KEY` + campaign id. Has `--dry-run`. |
 
@@ -107,11 +107,12 @@ commercial work and have a live mail domain — see `data/prospects/send-list-ba
 
 ## Next tasks, in order
 
-1. Fix `step4_score.py` (registry-based scoring)
-2. Run ①→⑤ end to end, eyeball the packaged list
-3. Build Ⓑ1 + Ⓑ2 (need ~300 cleaning companies, not 36)
-4. Load Instantly, dry-run first
-5. Stripe link — only needed the day someone says yes
+1. ~~Fix `step4_score.py`~~ — done
+2. **PIPELINE B — the only blocker.** 300 commercial cleaners with emails.
+   2,608 names already sit in `data/prospects/core-cleaning-candidates.csv`; none
+   have emails. Start with the 398 janitorial-coded rows.
+3. Send ~30/day using `docs/email-copy.md`
+4. Stripe link — only the day someone says yes
 
 Phases 1–2 produce zero revenue. The only step that proves anything is a real send.
 
@@ -121,10 +122,9 @@ Phases 1–2 produce zero revenue. The only step that proves anything is a real 
 
 - **Name:** MopList · **Domain:** moplist.com (available, Drew to purchase)
 - **Price:** **$49/mo**, no contract, 3 free leads first.
-  Revised down from $150 — see `research/competitor-scan-2026-09-08.md` in the
-  reddit repo. AlphaLeads sells raw filings at $19.99/mo, so $150 is indefensible.
+  Revised down from $150 — see `docs/competitors.md`. AlphaLeads sells raw filings at $19.99/mo, so $150 is indefensible.
 - **The one argument:** competitors sell volume (5,400 filings/day). 93% of that is
   houses, mailboxes and holding companies. *"They send you 5,400 filings a day.
   We send you the 19 with a floor to mop."*
-- **Email copy to use:** `business/moplist-brand-and-email-2026-09-08.md` in the
-  reddit repo. Do NOT use the earlier v1 copy — it quotes $150.
+- **Email copy to use:** `docs/email-copy.md` (5 variants) and `docs/customer-journey.md`
+  (what to say after they reply).

@@ -16,18 +16,18 @@
    ┌──────────────┐      ┌──────────────┐      ┌──────────────┐      ┌──────────────┐
    │ ① SOURCE      │      │ ② FILTER      │      │ ③ VERIFY      │      │ ④ SCORE       │
    │──────────────│      │──────────────│      │──────────────│      │──────────────│
-   │ pull filings │─────▶│ drop the      │─────▶│ Google Places│─────▶│ rank by how  │
-   │ last 30 days │      │ paper-only    │      │ lookup:      │      │ badly they   │
-   │ for my       │      │ entities:     │      │ real address?│      │ need a       │
-   │ cities       │      │ HOLDINGS      │      │ what type?   │      │ cleaner:     │
-   │              │      │ CAPITAL       │      │ how many     │      │ dentist = 5  │
-   │              │      │ INVESTMENTS   │      │ reviews?     │      │ bakery  = 5  │
-   │              │      │ VENTURES      │      │              │      │ storage = 1  │
-   │              │      │ (+ keep       │      │ no reviews   │      │              │
-   │              │      │ BAKERY SALON  │      │ = just       │      │              │
-   │              │      │ DENTAL CAFE)  │      │ opened       │      │              │
-   │ FREE         │      │ FREE          │      │ COSTS $      │      │ FREE         │
-   │ ✅ WORKS      │      │ ✅ WORKS      │      │ ⚠ needs key  │      │ ✅ READY     │
+   │ pull filings │─────▶│ drop the      │─────▶│ read the     │─────▶│ rank by how  │
+   │ last 30 days │      │ paper-only    │      │ REGISTRY     │      │ badly they   │
+   │ for my       │      │ entities:     │      │ ADDRESS:     │      │ need a       │
+   │ cities       │      │ HOLDINGS      │      │              │      │ cleaner:     │
+   │              │      │ CAPITAL       │      │ STE 501 = ✅  │      │ dentist = 5  │
+   │              │      │ INVESTMENTS   │      │ LOOP 337 = ✅ │      │ bakery  = 5  │
+   │              │      │ VENTURES      │      │ PAMPLONA LN❌ │      │ storage = 1  │
+   │              │      │ (+ keep       │      │ PMB 329   ❌ │      │              │
+   │              │      │ BAKERY SALON  │      │ APT 12    ❌ │      │              │
+   │              │      │ DENTAL CAFE)  │      │              │      │              │
+   │ FREE         │      │ FREE          │      │ FREE, NO API │      │ FREE         │
+   │ ✅ WORKS      │      │ ✅ WORKS      │      │ ✅ WORKS      │      │ ✅ WORKS     │
    └──────────────┘      └──────────────┘      └──────────────┘      └──────┬───────┘
         298                    150                    ~120                   │
       filings              candidates            with real addresses         │
@@ -77,7 +77,7 @@
                                                      ▼                      │
                                         ┌──────────────────────────┐        │
                                         │  ⑦ BILL — Stripe link     │        │
-                                        │  $150/mo, cancel anytime │        │
+                                        │  $49/mo, cancel anytime  │        │
                                         │  ❌ NOT BUILT             │        │
                                         └────────────┬─────────────┘        │
                                                      │                      │
@@ -121,15 +121,19 @@
    BUILD ORDER  (do them in this order, do not skip ahead)
   ══════════════════════════════════════════════════════════════════════════════
 
-   NOW ──▶ [1] Get Google Places key        unlocks ③ — without it there is no product
-           [2] Run the factory once         see real verified leads with addresses
-           [3] Build Ⓑ1 + Ⓑ2                 you need 300 cleaning cos, not 36
-           [4] Load Instantly campaign      your guy's part
-           [5] Stripe link                  only needed the day someone says yes
-                                            ↑
-                                    everything before this
-                                    is worthless until this
-                                    step actually happens
+   ✅ DONE  pipeline A steps ①-⑤          free, no API keys, runs today
+                                          298 filings -> 19 commercial premises
+
+   NOW ──▶ [1] PIPELINE B                 300 commercial cleaners with emails
+                                          2,608 already collected, 0 have emails.
+                                          THIS IS THE ONLY BLOCKER.
+
+           [2] send                       ~30/day. copy is written.
+           [3] Stripe link                only the day someone says yes
+                                          ↑
+                                  everything before this
+                                  is worthless until this
+                                  step actually happens
 ```
 
 ## Legend

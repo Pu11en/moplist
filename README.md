@@ -9,13 +9,15 @@ PIPELINE A — THE PRODUCT (what you sell)
 ========================================
 
   [1] SOURCE          [2] FILTER         [3] VERIFY          [4] SCORE          [5] PACKAGE
-  new business    →   kill junk      →   real address?   →   worth a       →   weekly list
-  filings             by name            (Places API)        cleaner?           per territory
-  (TX registry)       (HOLDINGS,         address, phone,     medical/office/    CSV + email
-  free, weekly        CAPITAL, ...)      category, age      restaurant = hot    body
-  cron
+  new business    →   kill junk      →   commercial      →   worth a       →   weekly list
+  filings             by name            premises?           cleaner?           per territory
+  (TX registry)       (HOLDINGS,         (registry           medical/office/    CSV + email
+  free, weekly        CAPITAL, ...)      address: suite      restaurant = hot   body
+  cron                                   vs house vs
+                                         mailbox)
       |                   |                   |                   |                   |
-   ~2000/wk           ~800 left           ~120 left           ~40 hot            delivered
+     298                 150                  19                hot first          delivered
+   filings           candidates           premises
                                                                                       |
                                                                                       v
 PIPELINE B — THE CUSTOMERS (who pays)                                          [6] DELIVER
@@ -55,7 +57,7 @@ python3 src/step6_deliver.py   # sends to paying customers + pushes samples to I
 | Phase | Build | Why |
 |---|---|---|
 | 1 | steps 1, 2 | Free, no API keys. Proves the raw supply exists. |
-| 2 | step 3 | Needs Google Places key. **This is the real work** — turns junk into leads. |
+| 2 | step 3 | Free — reads the registry address. **No Google, ever** (see `docs/data-rights-ruling.md`). |
 | 3 | steps 4, 5 | Cheap once 3 works. Makes it presentable. |
 | 4 | B1-B3 + step 6 | Only once you have a list worth sending. |
 | 5 | step 7 | Only once someone says yes. |
