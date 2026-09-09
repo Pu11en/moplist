@@ -1,5 +1,54 @@
 # MopList — STATUS, read this first
 
+## ⚠️ CORRECTIONS — 2026-09-09 (read before planning anything)
+
+**1. We are NOT at zero prospects. You can email 17 companies today.**
+
+The prospect files are in `data/prospects/` and are **gitignored** — they exist on
+disk, not in git. If you looked only at the repo contents you missed them. They are:
+
+| File | Rows | What |
+|---|---|---|
+| `data/prospects/send-list-batch1.csv` | **17** | commercial cleaners, live mail domains — **SEND-READY TODAY** |
+| `data/prospects/public-business-contacts.csv` | 36 | hand-enriched, 28 with email |
+| `data/prospects/core-cleaning-candidates.csv` | **2,608** | cleaning businesses, **398 janitorial-coded (NAICS 561720)** |
+
+**2. Do NOT build a "pipeline C" that pulls NAICS 561720 from the registry.**
+That collection is already done — it *is* the 398 janitorial rows above. Re-running it
+duplicates finished work. The only missing piece is **enrichment**:
+
+```
+have:  business name + city + NAICS   (2,608 rows, done)
+need:  website URL → email address    ← the entire remaining job
+```
+
+Start from the existing 398 rows. Do not re-collect.
+
+**3. Lead-quality bugs in `data/delivered/new-braunfels-2026-09-09.csv`.**
+Fix these filters before any list is sent — each one would burn a paying customer:
+
+- **`NEW BRAUNFELS COUNSELING CENTER, PLLC`** — verified operating since **1997**. This
+  filing is a re-registration, not a new business. We have no "is this actually new"
+  check. A cleaner who drives out to a 30-year-old practice cancels and never returns.
+  This is the single most damaging defect in the product.
+- **`876 LOOP 337 STE 501` appears twice** (Aires Artisan Bakery + Biz Basics AI). Two
+  unrelated businesses at one suite = virtual office / mail forwarding, not premises.
+  **Rule to add:** flag any address used by 2+ filings and drop it, same as PMB mailboxes.
+- **`LUIS JESUS MARRUPE GRUEIRO LLC`** — personal-name entity, meaningless to a cleaner.
+  The `PERSONAL` regex in `step2_filter.py` only matches two-word names; widen it to
+  three and four word personal names.
+- **`PRESS ON COUNSELING` at `2839 ROSEFINCH`** — no street suffix, subdivision-style
+  name. Probably residential.
+- **File is named `new-braunfels` but contains Seguin, San Marcos and Canyon Lake.**
+  Split by city or rename to the region. Someone buying "New Braunfels" should not be
+  sent Seguin.
+
+**Acceptance test for the lead list, judged by eye, no code reading:** would a cleaning
+company owner recognise the name and know where to drive? `Aires Artisan Bakery` yes.
+`Bykowski LLC` no.
+
+---
+
 Last updated 2026-09-08 by a Claude session. Written so a fresh agent can pick this
 up with zero prior context.
 
@@ -108,11 +157,17 @@ commercial work and have a live mail domain — see `data/prospects/send-list-ba
 ## Next tasks, in order
 
 1. ~~Fix `step4_score.py`~~ — done
-2. **PIPELINE B — the only blocker.** 300 commercial cleaners with emails.
-   2,608 names already sit in `data/prospects/core-cleaning-candidates.csv`; none
-   have emails. Start with the 398 janitorial-coded rows.
-3. Send ~30/day using `docs/email-copy.md`
-4. Stripe link — only the day someone says yes
+2. **Fix the lead-quality filters** — see corrections block at the top. Add: is-it-
+   actually-new check, shared-address (virtual office) drop, wider personal-name regex,
+   one city per delivered file.
+3. **PIPELINE B — the blocker.** Enrich the existing 398 janitorial rows with emails
+   (name + city → website → email). Do NOT re-collect; they are already in
+   `data/prospects/core-cleaning-candidates.csv`. Target 300.
+4. Send ~30/day using `docs/email-copy.md`
+5. Stripe link — only the day someone says yes
+
+**Drew can send to the 17 in `data/prospects/send-list-batch1.csv` at any time — that
+does not wait on tasks 2-3.**
 
 Phases 1–2 produce zero revenue. The only step that proves anything is a real send.
 
