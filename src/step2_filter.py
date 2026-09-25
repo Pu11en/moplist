@@ -17,9 +17,17 @@ JUNK = re.compile(r'\b('
     r'ENTERPRISES?|SOLUTIONS|GROUP|MANAGEMENT|MGMT|SERVICES'
     r')\b', re.I)
 
-# Bare personal names ("DUY HUYNH LLC", "HEIDI HOLMES, LLC") are usually one-person
-# entities with no storefront. Two capitalized words + LLC and nothing else.
-PERSONAL = re.compile(r'^[A-Z]+ [A-Z]+,? (LLC|L\.L\.C\.|LIMITED LIABILITY COMPANY)$', re.I)
+# Bare personal names ("DUY HUYNH LLC", "LUIS JESUS MARRUPE GRUEIRO LLC") are usually
+# one-person entities with no storefront. Two to four capitalized words + LLC and nothing
+# else -- the old two-word-only rule let four-word Hispanic and compound surnames through,
+# which is how LUIS JESUS MARRUPE GRUEIRO LLC reached a delivered list.
+#
+# Widening this is only safe because verdict() now checks for a physical hint first: a name
+# like "MARY JANE DENTAL LLC" matches this pattern too, and dropping it would be worse than
+# the bug being fixed.
+PERSONAL = re.compile(
+    r'^[A-Z]+( [A-Z]+){1,3},? (LLC|L\.L\.C\.|LIMITED LIABILITY COMPANY)$', re.I
+)
 
 # Names that suggest an actual physical place with floors, restrooms and traffic.
 PHYSICAL_HINT = re.compile(r'\b('
@@ -34,12 +42,17 @@ PHYSICAL_HINT = re.compile(r'\b('
 
 
 def verdict(name):
-    if PERSONAL.match(name.strip()):
-        return 'drop_personal_name'
+    # Ordered by how much each pattern actually knows. PHYSICAL_HINT is positive evidence
+    # of a place with floors. JUNK matches an explicit word like HOLDINGS or CAPITAL. Only
+    # PERSONAL is a guess, made from the shape of a name, so it goes last -- which is both
+    # what makes widening it safe and what keeps "BLUEBONNET HOLDINGS GROUP LLC" reported
+    # as a holding company rather than as somebody's name.
     if PHYSICAL_HINT.search(name):
-        return 'keep_physical_hint'   # strong signal, keep even if JUNK also matches
+        return 'keep_physical_hint'
     if JUNK.search(name):
         return 'drop_no_premises'
+    if PERSONAL.match(name.strip()):
+        return 'drop_personal_name'
     return 'keep_unknown'             # no signal either way -> step 3 decides
 
 

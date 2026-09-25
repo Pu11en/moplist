@@ -21,6 +21,7 @@ crawl4ai. That is the business's public site, not Google's database -- clean.
 Output: data/verified/verified-<date>.csv
 """
 import argparse, datetime as dt, re
+from collections import Counter
 from common import DATA, read_csv, write_csv
 
 # A unit designator means a leased space inside a larger building.
@@ -51,6 +52,23 @@ COMMERCIAL = re.compile(r'\b(LOOP|HWY|HIGHWAY|STATE HIGHWAY|FM|RR|US)\s?\d+|'
                         r'\bMAIN\s+ST', re.I)
 
 
+# A street line with no street type at all ("2839 ROSEFINCH") is almost always a
+# subdivision address: commercial lines carry ST, BLVD, STE, a highway number or similar.
+# Checked only after every positive signal has had its turn, so it is the last resort.
+HAS_STREET_TYPE = re.compile(
+    r'(ST|STREET|AVE|AVENUE|RD|ROAD|DR|DRIVE|BLVD|BOULEVARD|PKWY|PARKWAY|'
+    r'HWY|HIGHWAY|LOOP|FM|RR|EXPY|FWY|BYPASS|PLAZA|SQ|SQUARE|TER|TERRACE|'
+    r'LN|LANE|CT|COURT|CV|COVE|XING|CROSSING|TRL|TRAIL|CIR|CIRCLE|WAY|PL|PLACE|'
+    r'BND|BEND|RDG|RIDGE|PATH|RUN|PASS|GLN|GLEN|MDW|MEADOW|CRK|CREEK)\.?',
+    re.I,
+)
+
+
+def normalise_address(address):
+    """A key for spotting the same address twice. Case, punctuation and spacing only."""
+    return re.sub(r'[^A-Z0-9]+', ' ', (address or '').upper()).strip()
+
+
 def premises_verdict(address):
     """Return (verdict, confidence, why). No network call, no cost."""
     a = (address or '').strip()
@@ -66,6 +84,8 @@ def premises_verdict(address):
         return 'commercial', 2, 'on a commercial corridor'
     if RESIDENTIAL.search(a):
         return 'home_based', 0, 'residential street type -> likely run from a house'
+    if not HAS_STREET_TYPE.search(a):
+        return 'home_based', 0, 'no street type -> subdivision-style address, likely a house'
     return 'unknown', 1, 'address type unclear -- needs a look'
 
 
@@ -81,11 +101,26 @@ def main():
         v, conf, why = premises_verdict(r.get('taxpayer_address'))
         r['premises'], r['premises_confidence'], r['premises_reason'] = v, conf, why
 
+    # Two unrelated businesses registered at one suite is a virtual office or a mail
+    # forwarder, not premises -- the same thing PMB catches, spelled differently. It can
+    # only be seen across rows, so it runs after the per-address pass.
+    shared = Counter(
+        normalise_address(r.get('taxpayer_address')) for r in rows
+        if normalise_address(r.get('taxpayer_address'))
+    )
+    for r in rows:
+        key = normalise_address(r.get('taxpayer_address'))
+        if key and shared[key] > 1:
+            r['premises'] = 'mailbox'
+            r['premises_confidence'] = 0
+            r['premises_reason'] = (
+                f'{shared[key]} filings share this address -> virtual office / mail drop'
+            )
+
     wanted = {'commercial'} | ({'unknown'} if a.keep_unknown else set())
     keep = [r for r in rows if r['premises'] in wanted]
     out = write_csv(DATA / 'verified' / f'verified-{a.as_of}.csv', keep)
 
-    from collections import Counter
     tally = Counter(r['premises'] for r in rows)
     print(f'STEP 3: {len(rows)} in -> {dict(tally)} -> kept {len(keep)} -> {out}')
     print('        (no API, no cost, no Google content)')
